@@ -8,4 +8,5 @@ var configuration = JsonSerializer.Deserialize<Configuration>(jsonString);
 if (configuration is null || !configuration.IsValid) return;
 
 var odPairs = Solver.ComputeOdPairs(configuration);
+Exporter.ExportToMatFile(configuration.OutputFilePath, odPairs);
 

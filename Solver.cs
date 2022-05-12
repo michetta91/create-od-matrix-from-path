@@ -6,28 +6,33 @@ namespace create_od_matrix_from_path
     {
         internal static IEnumerable<ODPair> ComputeOdPairs(Configuration configuration)
         {
-            var inputOdPairs = ImportOdPairs(configuration.InputFilePath);
+            var inputOdPairs = ImportOdPairs(configuration.InputFilePath, configuration.TransportSystemToKeepAttributeName);
             var filteredOdPairs = FilterAndAggregateOdPairs(inputOdPairs, configuration.TransportSystemToKeep);
             return filteredOdPairs;
         }
 
-        private static IEnumerable<ODPair> ImportOdPairs(string inputFilePath)
+        private static IEnumerable<ODPair> ImportOdPairs(string inputFilePath, string tsysAttributeName)
         {
             var odPairs = new List<ODPair>();
 
             using (var fileStream = File.OpenRead(inputFilePath))
             using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
             {
+                var counter = 0;
                 var line = streamReader.ReadLine();
-                while (!string.IsNullOrEmpty(line) && !line.StartsWith("$PUTPATH:"))
+                while (!(string.IsNullOrEmpty(line) || counter > 10) && !line.StartsWith("$PUTRELATION:"))
                 {
-                    line = streamReader.ReadLine();             
+                    line = streamReader.ReadLine();
+                    if (string.IsNullOrEmpty(line)) counter++;
                 }
-                if (line == null) return odPairs;
+                if (string.IsNullOrEmpty(line)) return odPairs;
 
-                line = line.Replace("$PUTPATH:", string.Empty);
+                line = line.Replace("$PUTRELATION:", string.Empty);
                 var headersArray = line.Split(';');
                 var headers = Enumerable.Range(0, headersArray.Length).ToDictionary(x => headersArray[x]);
+                if (!headers.ContainsKey(tsysAttributeName)) return odPairs;
+
+
                 while (!string.IsNullOrEmpty(line) && !string.IsNullOrEmpty(line))
                 {
                     line = streamReader.ReadLine();
@@ -39,8 +44,8 @@ namespace create_od_matrix_from_path
                     {
                         OriginZoneNo = int.Parse(fields[headers["ORIGZONENO"]]),
                         DestinationZoneNo = int.Parse(fields[headers["DESTZONENO"]]),
-                        OdTrips = double.Parse(fields[headers["ODTRIPS"]]),
-                        TransportSystemCodes = fields[headers["TRANSPORTSYSTEMCODES"]].Split(',').Where(el => !string.IsNullOrEmpty(el)).ToHashSet()
+                        OdTrips = double.Parse(fields[headers["ODTRIPSTOTAL"]]),
+                        TransportSystemCodes = fields[headers[tsysAttributeName]].Split(',').Where(el => !string.IsNullOrEmpty(el)).ToHashSet()
                     };
                     odPairs.Add(odPair);
                 }
@@ -54,27 +59,18 @@ namespace create_od_matrix_from_path
         private static IEnumerable<ODPair> FilterAndAggregateOdPairs(IEnumerable<ODPair> inputOdPairs,
                                                    HashSet<string> transportSystemToKeep)
         {
-            var filteredOdPairs = new Dictionary<string, ODPair>();
-
+            var filteredOdPairs = new List<ODPair>();
             foreach (ODPair odPair in inputOdPairs)
             {
                 odPair.TransportSystemCodes.IntersectWith(transportSystemToKeep);
                 if (odPair.TransportSystemCodes.Any())
                 {
-                    
-                    if (filteredOdPairs.TryGetValue(odPair.Key, out ODPair oldOdPair))
-                    {
-                        oldOdPair.TransportSystemCodes.UnionWith(odPair.TransportSystemCodes);
-                        oldOdPair.OdTrips += odPair.OdTrips;
-                    }
-                    else
-                    {
-                        filteredOdPairs.Add(odPair.Key, odPair);
-                    }
+
+                    filteredOdPairs.Add(odPair);
                 }
 
             }
-            return filteredOdPairs.Values;
+            return filteredOdPairs;
         }
 
 
