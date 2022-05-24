@@ -20,7 +20,7 @@ namespace create_od_matrix_from_path
             {
                 var counter = 0;
                 var line = streamReader.ReadLine();
-                while (!(string.IsNullOrEmpty(line) || counter > 10) && !line.StartsWith("$PUTRELATION:"))
+                while (counter < 10 && !line.StartsWith("$PUTRELATION:"))
                 {
                     line = streamReader.ReadLine();
                     if (string.IsNullOrEmpty(line)) counter++;
