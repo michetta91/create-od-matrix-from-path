@@ -4,10 +4,12 @@ namespace create_od_matrix_from_path
 {
     internal static class Solver
     {
-        internal static IEnumerable<ODPair> ComputeOdPairs(Configuration configuration)
+        internal static IEnumerable<ODPair> ComputeOdPairs(string inputFilePath,
+                                                           string keepAttributeName,
+                                                           HashSet<string> elementsToKeep)
         {
-            var inputOdPairs = ImportOdPairs(configuration.InputFilePath, configuration.TransportSystemToKeepAttributeName);
-            var filteredOdPairs = FilterAndAggregateOdPairs(inputOdPairs, configuration.TransportSystemToKeep);
+            var inputOdPairs = ImportOdPairs(inputFilePath, keepAttributeName);
+            var filteredOdPairs = FilterAndAggregateOdPairs(inputOdPairs, elementsToKeep);
             return filteredOdPairs;
         }
 

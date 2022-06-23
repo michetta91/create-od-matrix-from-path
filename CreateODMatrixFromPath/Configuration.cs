@@ -2,21 +2,30 @@
 {
     internal class Configuration
     {
-        public string InputFilePath { get; set; } = string.Empty;
+        public string FolderPath { get; set; } = string.Empty;
+        public string InputOdPairsFileName { get; set; } = string.Empty;
+
+        public string OutputMatrixFileName { get; set; } = string.Empty;
+
+        public string ElementsToKeepFileName { get; set; } = string.Empty;
 
         /// <summary>
-        /// UDA formula: DISTINCT:PUTPATHS\DISTINCT:PUTPATHLEGSWITHOUTWALK\TSYSCODE
+        /// Per TSYS UDA formula: DISTINCT:PUTPATHS\DISTINCT:PUTPATHLEGSWITHOUTWALK\TSYSCODE
+        /// Per LINE UDA formula: 
         /// </summary>
-        public string TransportSystemToKeepAttributeName { get; set; } = string.Empty;
+        public string KeepAttributeName { get; set; } = string.Empty;
 
-        public HashSet<string> TransportSystemToKeep { get; set; } = new();
 
-        public string OutputFilePath { get; set; } = string.Empty;
+        public string InputFilePath { get  => Path.Combine(FolderPath, InputOdPairsFileName); }
+        public string OutputFilePath { get => Path.Combine(FolderPath, OutputMatrixFileName); }
+        public string ElementsToKeepFilePath { get => Path.Combine(FolderPath, ElementsToKeepFileName); }
 
-        public bool IsValid => !(string.IsNullOrEmpty(InputFilePath)
+        public bool IsValid => !(string.IsNullOrEmpty(FolderPath) 
+            || string.IsNullOrEmpty(InputOdPairsFileName)
+            || string.IsNullOrEmpty(OutputMatrixFileName)
+            || string.IsNullOrEmpty(ElementsToKeepFileName)
+            || string.IsNullOrEmpty(KeepAttributeName)
             || !File.Exists(InputFilePath)
-            || string.IsNullOrEmpty(TransportSystemToKeepAttributeName)
-            || string.IsNullOrEmpty(OutputFilePath)
-            || !TransportSystemToKeep.Any());
+            || !File.Exists(ElementsToKeepFilePath));
     }
 }
