@@ -11,7 +11,7 @@
 
         /// <summary>
         /// Per TSYS UDA formula: DISTINCT:PUTPATHS\DISTINCT:PUTPATHLEGSWITHOUTWALK\TSYSCODE
-        /// Per LINE UDA formula: 
+        /// Per LINE UDA formula: DISTINCT:PUTPATHS\DISTINCT:PUTPATHLEGSWITHOUTWALK\LINENAME
         /// </summary>
         public string KeepAttributeName { get; set; } = string.Empty;
 

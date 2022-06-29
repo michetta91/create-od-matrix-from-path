@@ -1,7 +1,7 @@
 ﻿{
-	"FolderPath": "C:\\Lory\\OneDriveUni\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\",
-	"InputOdPairsFileName": "NPVM_2017_DTV_OeV_Umlegung_.ODPairs.Binnen.att",
-	"OutputMatrixFileName": "NPVM_2017_DTV_OeV_Umlegung_.ReducedMatrix.Binnen.mtx",
-	"ElementsToKeepFileName": "",
-	"KeepAttributeName": "TRANSPORTSYSTEMCODES"
+	"FolderPath": "C:\\Lory\\OneDriveUni\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\Modello Piccolo",
+	"InputOdPairsFileName": "NNPVM_2017_DTV_OeV_Umlegung_.PutPaths.Binnen.att",
+	"OutputMatrixFileName": "NPVM_2017_DTV_OeV_Umlegung_.ODPairs.Binnen.Reduced.mtx",
+	"ElementsToKeepFileName": "LinesToKeep.txt",
+	"KeepAttributeName": "PUTLINES"
 }

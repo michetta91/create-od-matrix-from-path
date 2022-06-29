@@ -4,6 +4,10 @@ namespace create_od_matrix_from_path
 {
     internal static class Solver
     {
+        private const string TABLE_KEY = "$PUTPATH:";
+        private const string ORIGIN_KEY = "ORIGZONENO";
+        private const string DESTINATION_KEY = "DESTZONENO";
+        private const string TRIPS_KEY = "ODTRIPS";
         internal static IEnumerable<ODPair> ComputeOdPairs(string inputFilePath,
                                                            string keepAttributeName,
                                                            HashSet<string> elementsToKeep)
@@ -13,7 +17,7 @@ namespace create_od_matrix_from_path
             return filteredOdPairs;
         }
 
-        private static IEnumerable<ODPair> ImportOdPairs(string inputFilePath, string tsysAttributeName)
+        private static IEnumerable<ODPair> ImportOdPairs(string inputFilePath, string attributeToKeepName)
         {
             var odPairs = new List<ODPair>();
 
@@ -22,17 +26,17 @@ namespace create_od_matrix_from_path
             {
                 var counter = 0;
                 var line = streamReader.ReadLine();
-                while (counter < 10 && !line.StartsWith("$PUTRELATION:"))
+                while (counter < 10 && !line.StartsWith(TABLE_KEY))
                 {
                     line = streamReader.ReadLine();
                     if (string.IsNullOrEmpty(line)) counter++;
                 }
                 if (string.IsNullOrEmpty(line)) return odPairs;
 
-                line = line.Replace("$PUTRELATION:", string.Empty);
+                line = line.Replace(TABLE_KEY, string.Empty);
                 var headersArray = line.Split(';');
                 var headers = Enumerable.Range(0, headersArray.Length).ToDictionary(x => headersArray[x]);
-                if (!headers.ContainsKey(tsysAttributeName)) return odPairs;
+                if (!headers.ContainsKey(attributeToKeepName)) return odPairs;
 
 
                 while (!string.IsNullOrEmpty(line) && !string.IsNullOrEmpty(line))
@@ -42,13 +46,12 @@ namespace create_od_matrix_from_path
 
                     var fields = line.Split(';');
 
-                    var odPair = new ODPair
-                    {
-                        OriginZoneNo = int.Parse(fields[headers["ORIGZONENO"]]),
-                        DestinationZoneNo = int.Parse(fields[headers["DESTZONENO"]]),
-                        OdTrips = double.Parse(fields[headers["ODTRIPSTOTAL"]]),
-                        TransportSystemCodes = fields[headers[tsysAttributeName]].Split(',').Where(el => !string.IsNullOrEmpty(el)).ToHashSet()
-                    };
+                    var odPair = new ODPair(
+                        int.Parse(fields[headers[ORIGIN_KEY]]), 
+                        int.Parse(fields[headers[DESTINATION_KEY]]),
+                        double.Parse(fields[headers[TRIPS_KEY]]),
+                        fields[headers[attributeToKeepName]].Split(',').Where(el => !string.IsNullOrEmpty(el)).ToHashSet()
+                    );
                     odPairs.Add(odPair);
                 }
 
@@ -61,18 +64,24 @@ namespace create_od_matrix_from_path
         private static IEnumerable<ODPair> FilterAndAggregateOdPairs(IEnumerable<ODPair> inputOdPairs,
                                                    HashSet<string> transportSystemToKeep)
         {
-            var filteredOdPairs = new List<ODPair>();
+            var filteredOdPairs = new Dictionary<string, ODPair>();
             foreach (ODPair odPair in inputOdPairs)
             {
-                odPair.TransportSystemCodes.IntersectWith(transportSystemToKeep);
-                if (odPair.TransportSystemCodes.Any())
+                odPair.ElementToKeepCodes.IntersectWith(transportSystemToKeep);
+                if (odPair.ElementToKeepCodes.Any())
                 {
-
-                    filteredOdPairs.Add(odPair);
+                    if (!filteredOdPairs.ContainsKey(odPair.Key))
+                    {
+                        filteredOdPairs.Add(odPair.Key, odPair);
+                    }
+                    else
+                    {
+                        var oldODPair = filteredOdPairs[odPair.Key];
+                        filteredOdPairs[odPair.Key]= oldODPair.Sum(odPair);
+                    }
                 }
-
             }
-            return filteredOdPairs;
+            return filteredOdPairs.Values;
         }
 
 
