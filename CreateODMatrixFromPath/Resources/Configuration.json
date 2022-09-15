@@ -1,7 +1,7 @@
 ﻿{
-	"FolderPath": "C:\\Lory\\OneDriveUni\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\Modello Piccolo",
-	"InputOdPairsFileName": "NPVM_2017_DTV_OeV_Umlegung_.PutPaths.Binnen.att",
-	"OutputMatrixFileName": "NPVM_2017_DTV_OeV_Umlegung_.ODPairs.Binnen.Reduced.mtx",
+	"FolderPath": "C:\\Users\\bresc\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\MSP\\1.MatrixReductionAccordingToTrainSecondAssignment",
+	"InputOdPairsFileName": "OriginalQZD.att",
+	"OutputMatrixFileName": "ReducedQZD.mtx",
 	"ElementsToKeepFileName": "LinesToKeep.txt",
 	"KeepAttributeName": "PUTLINES"
 }
