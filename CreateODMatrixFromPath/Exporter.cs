@@ -31,5 +31,28 @@ namespace create_od_matrix_from_path
 
             File.WriteAllLines(exportFilePath, myLines);
         }
+
+        public static void ExportToMatToKeepMultiplier(string exportFilePath, IEnumerable<ODPair> odPairs)
+        {
+            if (File.Exists(exportFilePath)) File.Delete(exportFilePath);
+
+            var myLines = new List<string>();
+            myLines.Add("$O;D3");
+            myLines.Add("* From To");
+            myLines.Add("- -");
+            myLines.Add("* Factor");
+            myLines.Add("1.00");
+            myLines.Add("*");
+
+            foreach (var odPair in odPairs)
+            {
+                myLines.Add($"{odPair.OriginZoneNo} {odPair.DestinationZoneNo} {1}");
+            }
+
+            myLines.Add("* Network object names");
+            myLines.Add("$NAMES");
+
+            File.WriteAllLines(exportFilePath, myLines);
+        }
     }
 }
