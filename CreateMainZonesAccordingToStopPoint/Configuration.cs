@@ -13,7 +13,7 @@
         /// </summary>
         public string MergeAttributeName { get; set; } = string.Empty;
 
-        public string ElementsToKeepFilePath { get => Path.Combine(FolderPath, ElementsToMergeFileName); }
+        public string ElementsToMergeFilePath { get => Path.Combine(FolderPath, ElementsToMergeFileName); }
 
         public string OutputFilePathNet { get => Path.Combine(FolderPath, OutputFileName, ".MainZones.net"); }
         public string OutputFilePathAtt { get => Path.Combine(FolderPath, OutputFileName, ".Zones.att"); }     
@@ -22,6 +22,6 @@
             || string.IsNullOrEmpty(OutputFileName)
             || string.IsNullOrEmpty(ElementsToMergeFileName)
             || string.IsNullOrEmpty(MergeAttributeName)
-            || !File.Exists(ElementsToKeepFilePath));
+            || !File.Exists(ElementsToMergeFilePath));
     }
 }

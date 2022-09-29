@@ -11,5 +11,17 @@
 
             return maps;
         }
+
+        private static Dictionary<int, ElementToMerge> ImportPathLegs(string inputFolder)
+        {
+            Dictionary<int, ElementToMerge> elementToMergeMap = new();
+
+            var files = Directory.GetFiles(inputFolder).Where(file => Path.GetExtension(file) == ".att");
+            foreach (var file in files)
+            {
+            }
+
+            return elementToMergeMap;
+        }
     }
 }

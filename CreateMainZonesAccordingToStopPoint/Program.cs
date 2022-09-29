@@ -11,7 +11,7 @@ if (configuration is null || !configuration.IsValid)
     return;
 }
 
-var elementsToMerge = File.ReadAllLines(configuration.ElementsToMergeFileName).ToHashSet();
+var elementsToMerge = File.ReadAllLines(configuration.ElementsToMergeFilePath).ToHashSet();
 if (!elementsToMerge.Any()) return;
 
 Console.WriteLine("Element to merge:");
