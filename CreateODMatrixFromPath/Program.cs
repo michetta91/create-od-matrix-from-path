@@ -1,4 +1,4 @@
-﻿using create_od_matrix_from_path;
+﻿using CreateODMatrixFromPath;
 using System.Text.Json;
 
 string fileName = Path.Combine("Resources","Configuration.json");

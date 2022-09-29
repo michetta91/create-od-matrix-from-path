@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace create_od_matrix_from_path
+namespace CreateODMatrixFromPath
 {
     internal static class Exporter
     {
@@ -12,7 +12,7 @@ namespace create_od_matrix_from_path
         public static void ExportToMatFile(string exportFilePath, IEnumerable<ODPair> odPairs)
         {
             if (File.Exists(exportFilePath)) File.Delete(exportFilePath);
-          
+
             var myLines = new List<string>();
             myLines.Add("$O;D3");
             myLines.Add("* From To");

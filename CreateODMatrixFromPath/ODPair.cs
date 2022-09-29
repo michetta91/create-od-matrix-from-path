@@ -1,4 +1,4 @@
-﻿namespace create_od_matrix_from_path
+﻿namespace CreateODMatrixFromPath
 {
     internal class ODPair
     {

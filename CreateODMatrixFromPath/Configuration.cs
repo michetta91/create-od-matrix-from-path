@@ -1,4 +1,4 @@
-﻿namespace create_od_matrix_from_path
+﻿namespace CreateODMatrixFromPath
 {
     internal class Configuration
     {
@@ -16,11 +16,11 @@
         public string KeepAttributeName { get; set; } = string.Empty;
 
 
-        public string InputFilePath { get  => Path.Combine(FolderPath, InputOdPairsFileName); }
+        public string InputFilePath { get => Path.Combine(FolderPath, InputOdPairsFileName); }
         public string OutputFilePath { get => Path.Combine(FolderPath, OutputMatrixFileName); }
         public string ElementsToKeepFilePath { get => Path.Combine(FolderPath, ElementsToKeepFileName); }
 
-        public bool IsValid => !(string.IsNullOrEmpty(FolderPath) 
+        public bool IsValid => !(string.IsNullOrEmpty(FolderPath)
             || string.IsNullOrEmpty(InputOdPairsFileName)
             || string.IsNullOrEmpty(OutputMatrixFileName)
             || string.IsNullOrEmpty(ElementsToKeepFileName)

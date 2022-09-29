@@ -1,7 +1,7 @@
 ﻿{
-	"FolderPath": "C:\\Users\\bresc\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\MSP\\1.MatrixReductionAccordingToTrainSecondAssignment",
-	"InputOdPairsFileName": "OriginalQZD.att",
-	"OutputMatrixFileName": "ReducedQZD.mtx",
+	"FolderPath": "D:\\dev\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\MSP\\1.MatrixReductionAccordingToTrainCheck",
+	"InputOdPairsFileName": "OriginalX.att",
+	"OutputMatrixFileName": "ReducedX.mtx",
 	"ElementsToKeepFileName": "LinesToKeep.txt",
 	"KeepAttributeName": "PUTLINES"
 }

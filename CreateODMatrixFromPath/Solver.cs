@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace create_od_matrix_from_path
+namespace CreateODMatrixFromPath
 {
     internal static class Solver
     {
@@ -47,7 +47,7 @@ namespace create_od_matrix_from_path
                     var fields = line.Split(';');
 
                     var odPair = new ODPair(
-                        int.Parse(fields[headers[ORIGIN_KEY]]), 
+                        int.Parse(fields[headers[ORIGIN_KEY]]),
                         int.Parse(fields[headers[DESTINATION_KEY]]),
                         double.Parse(fields[headers[TRIPS_KEY]]),
                         fields[headers[attributeToKeepName]].Split(',').Where(el => !string.IsNullOrEmpty(el)).ToHashSet()
@@ -77,7 +77,7 @@ namespace create_od_matrix_from_path
                     else
                     {
                         var oldODPair = filteredOdPairs[odPair.Key];
-                        filteredOdPairs[odPair.Key]= oldODPair.Sum(odPair);
+                        filteredOdPairs[odPair.Key] = oldODPair.Sum(odPair);
                     }
                 }
             }
