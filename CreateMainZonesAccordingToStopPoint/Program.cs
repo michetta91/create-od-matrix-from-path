@@ -19,9 +19,15 @@ Console.WriteLine(string.Join(",", elementsToMerge));
 Console.WriteLine("Press ENTER to continue");
 Console.ReadLine();
 
-var odPairs = Solver.ComputeOdPairs(configuration.InputFilePath, configuration.KeepAttributeName, elementsToMerge);
-Exporter.ExportToMatToKeepMultiplier(configuration.OutputFilePath, odPairs);
+var maps = Solver.ComputeMaps(configuration.FolderPath, configuration.MergeAttributeName, elementsToMerge);
+if(maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
+{
+    Console.WriteLine("Invalid maps");
+    return;
+}
 
+Exporter.ExportToAttFile(configuration.OutputFilePathAtt, maps.ZoneToMainZoneMap);
+Exporter.ExportToNetFile(configuration.OutputFilePathNet, maps.MainZoneToElementMap);
 
 
 

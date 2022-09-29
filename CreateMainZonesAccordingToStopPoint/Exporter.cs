@@ -8,7 +8,7 @@ namespace CreateMainZonesAccordingToStopPoint
 {
     internal class Exporter
     {
-        internal static void ExportToNetFile(string outputFilePathNet, Dictionary<string, string> mainZonesMap)
+        internal static void ExportToNetFile(string outputFilePathNet, Dictionary<int, string> mainZoneToElementMap)
         {
 
             if (File.Exists(outputFilePathNet)) File.Delete(outputFilePathNet);
@@ -21,14 +21,14 @@ namespace CreateMainZonesAccordingToStopPoint
             myLines.Add("* Table: Main zones");
             myLines.Add("*");
             myLines.Add("MAINZONE:NO;CODE;NAME");
-            foreach (var mainZoneMap in mainZonesMap)
+            foreach (var mainZoneMap in mainZoneToElementMap)
             {
                 myLines.Add($"{mainZoneMap.Key};{mainZoneMap.Value};{mainZoneMap.Value}");
             }
             File.WriteAllLines(outputFilePathNet, myLines);
         }
 
-        internal static void ExportToAttFile(string outputFilePathAtt, Dictionary<string, string> mainZoneMap)
+        internal static void ExportToAttFile(string outputFilePathAtt, Dictionary<int, int> zoneToMainZoneMap)
         {
             if (File.Exists(outputFilePathAtt)) File.Delete(outputFilePathAtt);
 
@@ -40,7 +40,7 @@ namespace CreateMainZonesAccordingToStopPoint
             myLines.Add("* Table: Zones");
             myLines.Add("*");
             myLines.Add("$ZONE:NO;MAINZONENO");
-            foreach (var zoneMap in mainZoneMap)
+            foreach (var zoneMap in zoneToMainZoneMap)
             {
                 myLines.Add($"{zoneMap.Key};{zoneMap.Value}");
             }

@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CreateMainZonesAccordingToStopPoint
+﻿namespace CreateMainZonesAccordingToStopPoint
 {
     internal class Solver
     {
+
+        public static Maps ComputeMaps(string inputFolder,
+                                       string mergeAttributeName,
+                                       HashSet<string> elementsToMerge)
+        {
+            var maps = new Maps();
+
+            return maps;
+        }
     }
 }
