@@ -3,12 +3,19 @@
     internal class ElementToMerge
     {
         internal int OriginZoneNumber { get; private set; }
-        internal int ConnectedElement { get; private set; } 
+        internal SortedSet<int> ConnectedTransitStopNumbers { get; private set; }
 
-        internal ElementToMerge(int originZoneNumber, int connectedElement)
+        internal string Key { get => string.Join("-", ConnectedTransitStopNumbers); }
+
+        internal ElementToMerge(int originZoneNumber)
         {
             OriginZoneNumber = originZoneNumber;
-            ConnectedElement = connectedElement;
+            ConnectedTransitStopNumbers = new SortedSet<int>();
+        }
+
+        internal void AddConnectedTransitStop(int connectedTransitStopNumber)
+        {
+            ConnectedTransitStopNumbers.Add(connectedTransitStopNumber);
         }
     }
 }

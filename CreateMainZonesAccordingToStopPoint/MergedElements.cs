@@ -2,24 +2,20 @@
 {
     internal class MergedElements
     {
-        internal int OriginZoneNumber { get; private set; }
-        private HashSet<int> ConnectedStopPointNumbers { get; set; }
+        private SortedSet<int> StopPointNumbers { get; set; }
+        internal SortedSet<int> ConnectedZoneNumbers { get; private set; }
 
-        internal MergedElements(int originZoneNumber)
+        internal string Key { get => string.Join("-", StopPointNumbers); }
+
+        internal MergedElements(SortedSet<int> stopPointNumberspPoints)
         {
-            OriginZoneNumber = originZoneNumber;
-            ConnectedStopPointNumbers = new HashSet<int>();
+            StopPointNumbers = stopPointNumberspPoints;
+            ConnectedZoneNumbers = new SortedSet<int>();
         }
 
-        internal void AddElement(int connectedStopPointNumber)
+        internal void AddZone(int zoneNumber)
         {
-            ConnectedStopPointNumbers.Add(connectedStopPointNumber);
+            ConnectedZoneNumbers.Add(zoneNumber);
         }
-
-        internal HashSet<int> GetConnectedStopPointNumbers()
-        {
-            return ConnectedStopPointNumbers;
-        }
-
     }
 }

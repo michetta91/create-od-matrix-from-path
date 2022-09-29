@@ -10,8 +10,8 @@
 
         public string TransitStopsToKeepFilePath { get => Path.Combine(FolderPath, TransitStopsToKeepFileName); }
 
-        public string OutputFilePathNet { get => Path.Combine(FolderPath, OutputFileName, ".MainZones.net"); }
-        public string OutputFilePathAtt { get => Path.Combine(FolderPath, OutputFileName, ".Zones.att"); }     
+        public string OutputFilePathNet { get => Path.Combine(FolderPath,"Output", $"{OutputFileName}.MainZones.net"); }
+        public string OutputFilePathAtt { get => Path.Combine(FolderPath, "Output", $"{OutputFileName}.Zones.att"); }     
     
         public bool IsValid => !(string.IsNullOrEmpty(FolderPath)
             || string.IsNullOrEmpty(OutputFileName)

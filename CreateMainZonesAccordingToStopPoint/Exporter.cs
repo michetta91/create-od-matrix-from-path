@@ -8,7 +8,7 @@ namespace CreateMainZonesAccordingToStopPoint
 {
     internal class Exporter
     {
-        internal static void ExportToNetFile(string outputFilePathNet, Dictionary<int, HashSet<int>> mainZoneToElementMap)
+        internal static void ExportToNetFile(string outputFilePathNet, Dictionary<int, string> mainZoneToElementMap)
         {
 
             if (File.Exists(outputFilePathNet)) File.Delete(outputFilePathNet);
@@ -16,15 +16,14 @@ namespace CreateMainZonesAccordingToStopPoint
             var myLines = new List<string>();
             myLines.Add("$VISION");
             myLines.Add("$VERSION:VERSNR;FILETYPE;LANGUAGE;UNIT");
-            myLines.Add("13.00;Net;ENG;KM");
+            myLines.Add("13.000;Net;ENG;KM");
             myLines.Add("*");
             myLines.Add("* Table: Main zones");
             myLines.Add("*");
-            myLines.Add("MAINZONE:NO;CODE;NAME");
+            myLines.Add("$MAINZONE:NO;CODE;NAME;XCOORD;YCOORD");
             foreach (var mainZoneMap in mainZoneToElementMap)
-            {
-                var connectedTransitStops =string.Join("-", mainZoneMap.Value);
-                myLines.Add($"{mainZoneMap.Key};{connectedTransitStops};{connectedTransitStops}");
+            {    
+                myLines.Add($"{mainZoneMap.Key};{mainZoneMap.Value};{mainZoneMap.Value};0;0");
             }
             File.WriteAllLines(outputFilePathNet, myLines);
         }
@@ -36,7 +35,7 @@ namespace CreateMainZonesAccordingToStopPoint
             var myLines = new List<string>();
             myLines.Add("$VISION");
             myLines.Add("$VERSION:VERSNR;FILETYPE;LANGUAGE;UNIT");
-            myLines.Add("13.00;Att;ENG;KM");
+            myLines.Add("13.000;Att;ENG;KM");
             myLines.Add("*");
             myLines.Add("* Table: Zones");
             myLines.Add("*");

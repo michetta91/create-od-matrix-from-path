@@ -1,5 +1,4 @@
 ﻿using CreateMainZonesAccordingToStopPoint;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 string fileName = Path.Combine("Resources", "Configuration.json");
@@ -19,13 +18,15 @@ Console.WriteLine(string.Join(",", transitStopToKeep));
 Console.WriteLine("Press ENTER to continue");
 Console.ReadLine();
 
-var maps = Solver.ComputeMaps(configuration.FolderPath, transitStopToKeep);
-if(maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
+var maps = Solver.ComputeMaps(configuration.FolderPath, transitStopToKeep.Select(el => int.Parse(el)).ToHashSet());
+if (maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
 {
     Console.WriteLine("Invalid maps");
     return;
 }
 
+var outputDirectory = Path.GetDirectoryName(configuration.OutputFilePathAtt);
+if (!Directory.Exists(outputDirectory)) Directory.CreateDirectory(outputDirectory);
 Exporter.ExportToAttFile(configuration.OutputFilePathAtt, maps.ZoneToMainZoneMap);
 Exporter.ExportToNetFile(configuration.OutputFilePathNet, maps.MainZoneToElementMap);
 
