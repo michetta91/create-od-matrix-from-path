@@ -6,22 +6,16 @@
 
         public string OutputFileName { get; set; } = string.Empty;
 
-        public string ElementsToMergeFileName { get; set; } = string.Empty;
+        public string TransitStopsToKeepFileName { get; set; } = string.Empty;  
 
-        /// <summary>
-        /// Per TSTP: FROMSTOPPOINTNO
-        /// </summary>
-        public string MergeAttributeName { get; set; } = string.Empty;
-
-        public string ElementsToMergeFilePath { get => Path.Combine(FolderPath, ElementsToMergeFileName); }
+        public string TransitStopsToKeepFilePath { get => Path.Combine(FolderPath, TransitStopsToKeepFileName); }
 
         public string OutputFilePathNet { get => Path.Combine(FolderPath, OutputFileName, ".MainZones.net"); }
         public string OutputFilePathAtt { get => Path.Combine(FolderPath, OutputFileName, ".Zones.att"); }     
     
         public bool IsValid => !(string.IsNullOrEmpty(FolderPath)
             || string.IsNullOrEmpty(OutputFileName)
-            || string.IsNullOrEmpty(ElementsToMergeFileName)
-            || string.IsNullOrEmpty(MergeAttributeName)
-            || !File.Exists(ElementsToMergeFilePath));
+            || string.IsNullOrEmpty(TransitStopsToKeepFileName)
+            || !File.Exists(TransitStopsToKeepFilePath));
     }
 }

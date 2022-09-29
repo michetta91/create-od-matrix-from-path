@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CreateMainZonesAccordingToStopPoint
+﻿namespace CreateMainZonesAccordingToStopPoint
 {
     internal class ElementToMerge
     {
+        internal int OriginZoneNumber { get; private set; }
+        internal int ConnectedElement { get; private set; } 
+
+        internal ElementToMerge(int originZoneNumber, int connectedElement)
+        {
+            OriginZoneNumber = originZoneNumber;
+            ConnectedElement = connectedElement;
+        }
     }
 }
