@@ -10,11 +10,11 @@ namespace CreateMainZonesAccordingToStopPoint
                                        HashSet<int> transitStopToKeep)
         {
 
-            var elementsToMerge = ImportPathLegs(inputFolder);
-            return MergeElements(transitStopToKeep, elementsToMerge);
+            var elementsToMerge = ImportPathLegs(inputFolder, transitStopToKeep);
+            return MergeElements(elementsToMerge);
         }
 
-        private static List<ElementToMerge> ImportPathLegs(string inputFolder)
+        private static List<ElementToMerge> ImportPathLegs(string inputFolder, HashSet<int> transitStopToKeep)
         {
             Dictionary<int, ElementToMerge> elementsToMerge = new();
             var files = Directory.GetFiles(inputFolder).Where(file => Path.GetExtension(file) == ".att");
@@ -40,6 +40,7 @@ namespace CreateMainZonesAccordingToStopPoint
                 int originZoneNumberIndex = headers["ORIGZONENO"];
                 int fromStopPointNoIndex = headers["FROMSTOPPOINTNO"];
                 int currentOriginZoneNumber = 0;
+                int previousStopPointNumber = 0;
 
                 while (true)
                 {
@@ -48,30 +49,42 @@ namespace CreateMainZonesAccordingToStopPoint
                     var fields = line.Split(';');
 
                     var originZoneNumber = fields[originZoneNumberIndex];
-                    if (!string.IsNullOrEmpty(originZoneNumber)) currentOriginZoneNumber = int.Parse(originZoneNumber);
+                    if (!string.IsNullOrEmpty(originZoneNumber))
+                    {
+                        var newOriginZoneNumber = int.Parse(originZoneNumber);
+                        currentOriginZoneNumber = newOriginZoneNumber;
+                        previousStopPointNumber = 0;
+                    }
 
                     var connectedStopPoint = fields[fromStopPointNoIndex];
                     if (string.IsNullOrEmpty(connectedStopPoint)) continue;
-
                     if (!elementsToMerge.ContainsKey(currentOriginZoneNumber))
                     {
                         elementsToMerge.Add(currentOriginZoneNumber, new ElementToMerge(currentOriginZoneNumber));
                     }
-                    elementsToMerge[currentOriginZoneNumber].AddConnectedTransitStop(int.Parse(connectedStopPoint));
+
+                    if (previousStopPointNumber != 0) continue;
+
+
+                    var currentStopPointNumber = int.Parse(connectedStopPoint);
+
+                    if (previousStopPointNumber != currentStopPointNumber && transitStopToKeep.Contains(currentStopPointNumber))
+                    {
+                        elementsToMerge[currentOriginZoneNumber].AddConnectedTransitStop(int.Parse(connectedStopPoint));
+                        previousStopPointNumber = currentStopPointNumber;
+                    }
                 }
             }
 
             return elementsToMerge.Values.ToList();
         }
 
-        private static Maps MergeElements(HashSet<int> transitStopToKeep,
-                                          List<ElementToMerge> elementsToMerge)
+        private static Maps MergeElements(List<ElementToMerge> elementsToMerge)
         {
 
             var mergedElements = new Dictionary<string, MergedElements>();
             foreach (var element in elementsToMerge)
             {
-                element.ConnectedTransitStopNumbers.IntersectWith(transitStopToKeep);
                 if (element.ConnectedTransitStopNumbers.Count == 0) continue;
 
                 if (!mergedElements.ContainsKey(element.Key))
@@ -87,7 +100,7 @@ namespace CreateMainZonesAccordingToStopPoint
             var mainZoneToElementMap = new Dictionary<int, string>();
             var zoneToMainZoneMap = new Dictionary<int, int>();
 
-            int counter =0;
+            int counter = 0;
             foreach (var mergedElement in mergedElements.Values)
             {
                 counter++;
