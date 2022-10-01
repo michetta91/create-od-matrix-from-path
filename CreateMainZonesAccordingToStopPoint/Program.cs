@@ -10,15 +10,15 @@ if (configuration is null || !configuration.IsValid)
     return;
 }
 
-var transitStopToKeep = File.ReadAllLines(configuration.TransitStopsToKeepFilePath).ToHashSet();
-if (!transitStopToKeep.Any()) return;
+var linesToKeep = File.ReadAllLines(configuration.LinesToKeepFilePath).ToHashSet();
+if (!linesToKeep.Any()) return;
 
 Console.WriteLine("Element to merge:");
-Console.WriteLine(string.Join(",", transitStopToKeep));
+Console.WriteLine(string.Join(",", linesToKeep));
 Console.WriteLine("Press ENTER to continue");
 Console.ReadLine();
 
-var maps = Solver.ComputeMaps(configuration.FolderPath, transitStopToKeep.Select(el => int.Parse(el)).ToHashSet());
+var maps = Solver.ComputeMaps(configuration.InputFilePath, linesToKeep);
 if (maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
 {
     Console.WriteLine("Invalid maps");

@@ -3,19 +3,21 @@
     internal class Configuration
     {
         public string FolderPath { get; set; } = string.Empty;
-
+        public string InputFileName { get; set; } = string.Empty;
         public string OutputFileName { get; set; } = string.Empty;
 
-        public string TransitStopsToKeepFileName { get; set; } = string.Empty;  
+        public string LinesToKeepFileName { get; set; } = string.Empty;
 
-        public string TransitStopsToKeepFilePath { get => Path.Combine(FolderPath, TransitStopsToKeepFileName); }
+        public string InputFilePath { get => Path.Combine(FolderPath, InputFileName); }
+        public string LinesToKeepFilePath { get => Path.Combine(FolderPath, LinesToKeepFileName); }
+        public string OutputFilePathNet { get => Path.Combine(FolderPath, "Output", $"{OutputFileName}.MainZones.net"); }
+        public string OutputFilePathAtt { get => Path.Combine(FolderPath, "Output", $"{OutputFileName}.Zones.att"); }
 
-        public string OutputFilePathNet { get => Path.Combine(FolderPath,"Output", $"{OutputFileName}.MainZones.net"); }
-        public string OutputFilePathAtt { get => Path.Combine(FolderPath, "Output", $"{OutputFileName}.Zones.att"); }     
-    
         public bool IsValid => !(string.IsNullOrEmpty(FolderPath)
+            || string.IsNullOrEmpty(InputFileName)
+            || string.IsNullOrEmpty(LinesToKeepFileName)
             || string.IsNullOrEmpty(OutputFileName)
-            || string.IsNullOrEmpty(TransitStopsToKeepFileName)
-            || !File.Exists(TransitStopsToKeepFilePath));
+            || !File.Exists(InputFilePath) 
+            || !File.Exists(LinesToKeepFilePath));
     }
 }

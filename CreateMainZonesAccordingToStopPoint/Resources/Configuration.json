@@ -1,5 +1,6 @@
 ﻿{
   "FolderPath": "C:\\Lory\\OneDriveUni\\OneDrive - uniroma1.it\\Transit Assignment\\Zurich\\MSP\\2.ComputeNewODPairsFromPathLegs",
+  "InputFileName": "PathLegsAll.att",
   "OutputFileName": "MainZones",
-  "TransitStopsToKeepFileName": "TransitStopsToKeep.txt"
+  "LinesToKeepFileName": "LinesToKeep.txt"
 }

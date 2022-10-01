@@ -4,69 +4,74 @@ namespace CreateMainZonesAccordingToStopPoint
     internal class Solver
     {
 
-        public static Maps ComputeMaps(string inputFolder,
-                                       HashSet<int> transitStopToKeep)
+        public static Maps ComputeMaps(string inputFilePath,
+                                       HashSet<string> linesToKeep)
         {
 
-            var putPathLegs = ImportPathLegs(inputFolder, transitStopToKeep);
+            var putPathLegs = ImportPathLegs(inputFilePath, linesToKeep);
+            if(putPathLegs is null) return new Maps();
+
             var elementsToMerge = ComputeElementsToMerger(putPathLegs);
             return MergeElements(elementsToMerge);
         }
 
-        private static PutPathLeg[] ImportPathLegs(string inputFolder, HashSet<int> transitStopToKeep)
+        private static PutPathLeg[]? ImportPathLegs(string inputFilePath, HashSet<string> linesToKeep)
         {
 
             Dictionary<string, PutPathLeg> putPathLegs = new();
-            var files = Directory.GetFiles(inputFolder).Where(file => Path.GetExtension(file) == ".att");
-            foreach (var file in files)
+
+            var result = ComputeHeaders(inputFilePath);
+            if (result is null) return null;
+
+            int originZoneNumberIndex = result.Value.headers["ORIGZONENO"];
+            int destinationZoneNumberIndex = result.Value.headers["DESTZONENO"];
+            int pathIndexIndex = result.Value.headers["PATHINDEX"];
+
+            int lineIndex = result.Value.headers["LINENAME"];
+            int fromStopPointNoIndex = result.Value.headers["FROMSTOPPOINTNO"];
+            int toStopPointNoIndex = result.Value.headers["TOSTOPPOINTNO"];
+
+            PutPathLeg? currentPathLeg = null;
+            var lines = File.ReadAllLines(inputFilePath).Skip(result.Value.headerLine).ToArray();
+            foreach (var line in lines)
             {
-                var result = ComputeHeaders(file);
-                if (result is null) continue;
+                if (string.IsNullOrEmpty(line)) continue;
+                var fields = line.Split(';');
 
-
-                int originZoneNumberIndex = result.Value.headers["ORIGZONENO"];
-                int destinationZoneNumberIndex = result.Value.headers["DESTZONENO"];
-                int pathIndexIndex = result.Value.headers["PATHINDEX"];
-
-                int fromStopPointNoIndex = result.Value.headers["FROMSTOPPOINTNO"];
-                int toStopPointNoIndex = result.Value.headers["TOSTOPPOINTNO"];
-
-                PutPathLeg? currentPathLeg = null;
-                var lines = File.ReadAllLines(file).Skip(result.Value.headerLine).ToArray();
-                foreach (var line in lines)
+                string originZoneNumber = fields[originZoneNumberIndex];
+                string destinationZoneNumber = fields[destinationZoneNumberIndex];
+                string pathIndex = fields[pathIndexIndex];
+                if (!string.IsNullOrEmpty(originZoneNumber) &&
+                    !string.IsNullOrEmpty(destinationZoneNumber) &&
+                    !string.IsNullOrEmpty(pathIndex))
                 {
-                    if (string.IsNullOrEmpty(line)) continue;
-                    var fields = line.Split(';');
-
-                    string originZoneNumber = fields[originZoneNumberIndex];
-                    string destinationZoneNumber = fields[destinationZoneNumberIndex];
-                    string pathIndex = fields[pathIndexIndex];
-                    if (!string.IsNullOrEmpty(originZoneNumber) &&
-                        !string.IsNullOrEmpty(destinationZoneNumber) &&
-                        !string.IsNullOrEmpty(pathIndex))
+                    var key = Key(originZoneNumber, destinationZoneNumber, pathIndex);
+                    if (!putPathLegs.ContainsKey(key))
                     {
-                        var key = Key(originZoneNumber, destinationZoneNumber, pathIndex);
-                        if (!putPathLegs.ContainsKey(key))
-                        {
-                            var pathLeg = new PutPathLeg(originZoneNumber, destinationZoneNumber, pathIndex);
-                            putPathLegs.Add(pathLeg.Key, pathLeg);
-                        }
-                        currentPathLeg = putPathLegs[key];
+                        var pathLeg = new PutPathLeg(originZoneNumber, destinationZoneNumber, pathIndex);
+                        putPathLegs.Add(pathLeg.Key, pathLeg);
                     }
-                    if (currentPathLeg is null) continue;
+                    currentPathLeg = putPathLegs[key];
+                    continue;
+                }
+                if (currentPathLeg is null) continue;
 
+                var lineName = fields[lineIndex];
+                if (linesToKeep.Contains(lineName))
+                {
                     var fromStopPointNumber = fields[fromStopPointNoIndex];
+                    currentPathLeg.AddStopPoint(int.Parse(fromStopPointNumber), true);
                     var toStopPointNumber = fields[toStopPointNoIndex];
-                    currentPathLeg.AddStopPoints(transitStopToKeep, fromStopPointNumber, toStopPointNumber);
+                    currentPathLeg.AddStopPoint(int.Parse(toStopPointNumber), false);
                 }
             }
 
             return putPathLegs.Values.ToArray();
         }
 
-        private static (int headerLine, Dictionary<string, int> headers)? ComputeHeaders(string file)
+        private static (int headerLine, Dictionary<string, int> headers)? ComputeHeaders(string inputFilePath)
         {
-            var lines = File.ReadAllLines(file);
+            var lines = File.ReadAllLines(inputFilePath);
             int counter = 0;
             foreach (var line in lines)
             {
@@ -97,18 +102,34 @@ namespace CreateMainZonesAccordingToStopPoint
             var elementsToMerge = new Dictionary<int, ElementToMerge>();
             foreach (var putPathLeg in putPathLegs)
             {
-                if (!elementsToMerge.ContainsKey(putPathLeg.OriginZoneNumber))
-                {
-                    elementsToMerge.Add(putPathLeg.OriginZoneNumber, new ElementToMerge(putPathLeg.OriginZoneNumber));
-                }
-                elementsToMerge[putPathLeg.OriginZoneNumber].AddConnectedTransitStop(putPathLeg.FromStopPointNumber);
+                //if (putPathLeg.FromStopPointNumber == int.MaxValue ||
+                //    putPathLeg.ToStopPointNumber == int.MaxValue)
+                //{
+                //    Debugger.Break();
+                //}
 
-                if (!elementsToMerge.ContainsKey(putPathLeg.DestinationZoneNumber))
+                if (putPathLeg.FromStopPointNumber != int.MaxValue)
                 {
-                    elementsToMerge.Add(putPathLeg.DestinationZoneNumber, new ElementToMerge(putPathLeg.DestinationZoneNumber));
+                    if (!elementsToMerge.ContainsKey(putPathLeg.OriginZoneNumber))
+                    {
+                        elementsToMerge.Add(putPathLeg.OriginZoneNumber, new ElementToMerge(putPathLeg.OriginZoneNumber));
+                    }
+
+                    elementsToMerge[putPathLeg.OriginZoneNumber].AddConnectedTransitStop(putPathLeg.FromStopPointNumber);
                 }
-                elementsToMerge[putPathLeg.DestinationZoneNumber].AddConnectedTransitStop(putPathLeg.ToStopPointNumber);
+
+
+                if (putPathLeg.ToStopPointNumber != int.MaxValue)
+                {
+                    if (!elementsToMerge.ContainsKey(putPathLeg.DestinationZoneNumber))
+                    {
+                        elementsToMerge.Add(putPathLeg.DestinationZoneNumber, new ElementToMerge(putPathLeg.DestinationZoneNumber));
+                    }
+                    elementsToMerge[putPathLeg.DestinationZoneNumber].AddConnectedTransitStop(putPathLeg.ToStopPointNumber);
+
+                }
             }
+
             return elementsToMerge.Values.ToArray();
         }
 

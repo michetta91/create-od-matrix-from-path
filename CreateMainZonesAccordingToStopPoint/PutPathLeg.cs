@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CreateMainZonesAccordingToStopPoint
+﻿namespace CreateMainZonesAccordingToStopPoint
 {
     internal class PutPathLeg
     {
@@ -34,7 +28,7 @@ namespace CreateMainZonesAccordingToStopPoint
         {
             if (isFrom)
             {
-                if (FromStopPointNumber != int.MaxValue) FromStopPointNumber = stopPointNumber;
+                if (FromStopPointNumber == int.MaxValue) FromStopPointNumber = stopPointNumber;
             }
             else
             {
@@ -43,24 +37,4 @@ namespace CreateMainZonesAccordingToStopPoint
         }
     }
 
-    internal static class PutPathLegExtensions
-    {
-        internal static void AddStopPoints(this PutPathLeg putPathLeg,
-                                           HashSet<int> transitStopToKeep,
-                                           string fromStopPointNumber,
-                                           string toStopPointNumber)
-        {
-            var fromStopPointNumberInt = int.Parse(fromStopPointNumber);
-            if (transitStopToKeep.Contains(fromStopPointNumberInt))
-            {
-                putPathLeg.AddStopPoint(fromStopPointNumberInt, true);
-            }
-
-            var toStopPointNumberInt = int.Parse(toStopPointNumber);
-            if (transitStopToKeep.Contains(toStopPointNumberInt))
-            {
-                putPathLeg.AddStopPoint(toStopPointNumberInt, false);
-            }
-        }
-    }
 }
