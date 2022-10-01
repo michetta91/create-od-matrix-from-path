@@ -2,14 +2,14 @@
 {
     internal class ElementToMerge
     {
-        internal int OriginZoneNumber { get; private set; }
+        internal int  ZoneNumber { get; private set; }
         internal SortedSet<int> ConnectedTransitStopNumbers { get; private set; }
 
         internal string Key { get => string.Join("-", ConnectedTransitStopNumbers); }
 
-        internal ElementToMerge(int originZoneNumber)
+        internal ElementToMerge(int zoneNumber)
         {
-            OriginZoneNumber = originZoneNumber;
+            ZoneNumber = zoneNumber;
             ConnectedTransitStopNumbers = new SortedSet<int>();
         }
 
