@@ -18,7 +18,7 @@ Console.WriteLine(string.Join(",", linesToKeep));
 Console.WriteLine("Press ENTER to continue");
 Console.ReadLine();
 
-var maps = Solver.ComputeMaps(configuration.InputFilePath, linesToKeep);
+var maps = Solver.ComputeMaps(configuration.InputFilePath, configuration.StopPointsFilePath, linesToKeep);
 if (maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
 {
     Console.WriteLine("Invalid maps");
@@ -27,8 +27,8 @@ if (maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
 
 var outputDirectory = Path.GetDirectoryName(configuration.OutputFilePathAtt);
 if (!Directory.Exists(outputDirectory)) Directory.CreateDirectory(outputDirectory);
+Exporter.ExportToNetFile(configuration.OutputFilePathNet, maps);
 Exporter.ExportToAttFile(configuration.OutputFilePathAtt, maps.ZoneToMainZoneMap);
-Exporter.ExportToNetFile(configuration.OutputFilePathNet, maps.MainZoneToElementMap);
 
 
 

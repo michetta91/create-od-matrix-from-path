@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CreateMainZonesAccordingToStopPoint
+﻿namespace CreateMainZonesAccordingToStopPoint
 {
     internal class Exporter
     {
-        internal static void ExportToNetFile(string outputFilePathNet, Dictionary<int, string> mainZoneToElementMap)
+        internal static void ExportToNetFile(string outputFilePathNet, Maps maps)
         {
-
             if (File.Exists(outputFilePathNet)) File.Delete(outputFilePathNet);
 
             var myLines = new List<string>();
@@ -21,10 +14,29 @@ namespace CreateMainZonesAccordingToStopPoint
             myLines.Add("* Table: Main zones");
             myLines.Add("*");
             myLines.Add("$MAINZONE:NO;CODE;NAME;XCOORD;YCOORD");
-            foreach (var mainZoneMap in mainZoneToElementMap)
+            foreach (var mainZoneMap in maps.MainZoneToElementMap)
             {    
                 myLines.Add($"{mainZoneMap.Key};{mainZoneMap.Value};{mainZoneMap.Value};0;0");
             }
+            myLines.Add("");
+
+            myLines.Add("*");
+            myLines.Add("* Table: Connectors");
+            myLines.Add("*");
+            myLines.Add("$CONNECTOR:ZONENO;NODENO;DIRECTION;TYPENO;TSYSSET");
+            foreach (var zoneToMainZone in maps.ZoneToMainZoneMap)
+            {
+                var stopPointNumbersString = maps.MainZoneToElementMap[zoneToMainZone.Value];
+                string[] stopPointNumbers = stopPointNumbersString.Split("-");
+             
+                foreach(var stopPointNumber in stopPointNumbers)
+                {
+                    var nodeNumer = maps.StopPointsMap[int.Parse(stopPointNumber)];
+                    myLines.Add($"{zoneToMainZone.Key};{nodeNumer};O;9;");
+                    myLines.Add($"{zoneToMainZone.Key};{nodeNumer};D;9;");
+                }
+            }
+
             File.WriteAllLines(outputFilePathNet, myLines);
         }
 

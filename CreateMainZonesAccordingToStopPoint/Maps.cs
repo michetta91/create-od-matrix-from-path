@@ -3,6 +3,7 @@
     internal class Maps
     {
         internal Dictionary<int, string> MainZoneToElementMap { get;  set; }
-        internal Dictionary<int, int> ZoneToMainZoneMap { get;  set; } 
+        internal Dictionary<int, int> ZoneToMainZoneMap { get;  set; }
+        internal Dictionary<int, int> StopPointsMap { get; set; }
     }
 }
