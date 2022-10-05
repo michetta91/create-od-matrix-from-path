@@ -18,7 +18,7 @@ Console.WriteLine(string.Join(",", linesToKeep));
 Console.WriteLine("Press ENTER to continue");
 Console.ReadLine();
 
-var maps = Solver.ComputeMaps(configuration.InputFilePath, configuration.StopPointsFilePath, linesToKeep);
+var maps = Solver.ComputeMaps(configuration.InputFilePath, configuration.StopPointsFilePath, linesToKeep, configuration.MergeAccordingToDestination);
 if (maps.ZoneToMainZoneMap is null || maps.MainZoneToElementMap is null)
 {
     Console.WriteLine("Invalid maps");

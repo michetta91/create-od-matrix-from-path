@@ -6,13 +6,14 @@ namespace CreateMainZonesAccordingToStopPoint
 
         public static Maps ComputeMaps(string inputFilePath,
                                        string stopPointsFilePath,
-                                       HashSet<string> linesToKeep)
+                                       HashSet<string> linesToKeep,
+                                       bool mergeAccordingToDestination)
         {
 
             var putPathLegs = ImportPathLegs(inputFilePath, linesToKeep);
             if (putPathLegs is null) return new Maps();
 
-            var elementsToMerge = ComputeElementsToMerger(putPathLegs);
+            var elementsToMerge = ComputeElementsToMerger(putPathLegs, mergeAccordingToDestination);
             var mergedElements = MergeElements(elementsToMerge);
 
             return ComputeMaps(mergedElements, stopPointsFilePath);
@@ -23,8 +24,10 @@ namespace CreateMainZonesAccordingToStopPoint
 
             Dictionary<string, PutPathLeg> putPathLegs = new();
 
+            var lines = File.ReadAllLines(inputFilePath);
+
             string[] keys = { "ORIGZONENO", "DESTZONENO", "PATHINDEX" };
-            var result = ComputeHeaders(inputFilePath, "$PUTPATHLEG:", keys);
+            var result = ComputeHeaders(lines, "$PUTPATHLEG:", keys);
             if (result is null) return null;
 
             int originZoneNumberIndex = result.Value.headers[keys[0]];
@@ -36,8 +39,7 @@ namespace CreateMainZonesAccordingToStopPoint
             int toStopPointNoIndex = result.Value.headers["TOSTOPPOINTNO"];
 
             PutPathLeg? currentPathLeg = null;
-            var lines = File.ReadAllLines(inputFilePath).Skip(result.Value.headerLine).ToArray();
-            foreach (var line in lines)
+            foreach (var line in lines.Skip(result.Value.headerLine).ToArray())
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var fields = line.Split(';');
@@ -70,14 +72,15 @@ namespace CreateMainZonesAccordingToStopPoint
                 }
             }
 
-            return putPathLegs.Values.ToArray();
+            return putPathLegs.Values.
+                Where(putPathLeg => putPathLeg.FromStopPointNumber != int.MaxValue || putPathLeg.ToStopPointNumber != int.MaxValue).
+                ToArray();
         }
 
-        private static (int headerLine, Dictionary<string, int> headers)? ComputeHeaders(string inputFilePath,
+        private static (int headerLine, Dictionary<string, int> headers)? ComputeHeaders(string[] lines,
                                                                                          string header,
                                                                                          string[] keys)
         {
-            var lines = File.ReadAllLines(inputFilePath);
             int counter = 0;
             foreach (var line in lines)
             {
@@ -108,12 +111,13 @@ namespace CreateMainZonesAccordingToStopPoint
             return $"{originZoneNumber};{destinationZoneNumber};{pathIndex}";
         }
 
-        private static ElementToMerge[] ComputeElementsToMerger(PutPathLeg[] putPathLegs)
+        private static ElementToMerge[] ComputeElementsToMerger(PutPathLeg[] putPathLegs, bool mergeAccordingToDestination)
         {
             var elementsToMerge = new Dictionary<int, ElementToMerge>();
             foreach (var putPathLeg in putPathLegs)
             {
-                if (putPathLeg.FromStopPointNumber != int.MaxValue)
+                if (!mergeAccordingToDestination &&
+                    putPathLeg.FromStopPointNumber != int.MaxValue)
                 {
                     if (!elementsToMerge.ContainsKey(putPathLeg.OriginZoneNumber))
                     {
@@ -183,15 +187,16 @@ namespace CreateMainZonesAccordingToStopPoint
 
         private static Dictionary<int, int> ComputeStopPointMap(string stopPointsFilePath)
         {
+            var lines = File.ReadAllLines(stopPointsFilePath);
+
             string[] keys = { "NO" };
-            var result = ComputeHeaders(stopPointsFilePath, "$STOPPOINT:", keys);
+            var result = ComputeHeaders(lines, "$STOPPOINT:", keys);
             int stopPointNumberIndex = result.Value.headers[keys[0]];
             int nodeNumberIndex = result.Value.headers["NODENO"];
             int fromNodeNumberIndex = result.Value.headers["FROMNODENO"];
 
             Dictionary<int, int>? stopPointToNodeMap = new();
-            var lines = File.ReadAllLines(stopPointsFilePath).Skip(result.Value.headerLine).ToArray();
-            foreach (var line in lines)
+            foreach (var line in lines.Skip(result.Value.headerLine).ToArray())
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var fields = line.Split(';');

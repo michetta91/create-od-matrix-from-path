@@ -7,6 +7,7 @@
         public string OutputFileName { get; set; } = string.Empty;
         public string StopPointsFileName { get; set; } = string.Empty;
         public string LinesToKeepFileName { get; set; } = string.Empty;
+        public bool MergeAccordingToDestination { get; set; } = true;
 
         public string InputFilePath { get => Path.Combine(FolderPath, InputFileName); }
         public string StopPointsFilePath { get => Path.Combine(FolderPath, StopPointsFileName); }
