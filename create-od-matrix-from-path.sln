@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateODMatrixFromPath", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateMainZonesAccordingToStopPoint", "CreateMainZonesAccordingToStopPoint\CreateMainZonesAccordingToStopPoint.csproj", "{7A041A49-6519-4768-A563-41C93F08C090}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AggregateZonesConnectedToTheSameNode", "AggregateZonesConnectedToTheSameNode\AggregateZonesConnectedToTheSameNode.csproj", "{AFB8CF56-F100-4700-8326-4200784669D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7A041A49-6519-4768-A563-41C93F08C090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A041A49-6519-4768-A563-41C93F08C090}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A041A49-6519-4768-A563-41C93F08C090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFB8CF56-F100-4700-8326-4200784669D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFB8CF56-F100-4700-8326-4200784669D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFB8CF56-F100-4700-8326-4200784669D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFB8CF56-F100-4700-8326-4200784669D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
